@@ -1,42 +1,42 @@
 
 # Object.keys, values, entries
 
-Let's step away from the individual data structures and talk about the iterations over them.
+دعنا نبتعد قليلا عن بنىة البيانات الفردية ونتحدث عن التكرار عليها. 
+لقد رأينا هؤلاء الدوال فى الفصل السابق  `map.keys()`, `map.values()`, `map.entries()`.
 
-In the previous chapter we saw methods `map.keys()`, `map.values()`, `map.entries()`.
+هؤلاء الدوال يتم استخدامهم بصورة عامه وهناك إتفاقية شائعه لإستخدامهم مع بنية البيانات.
+وإذا أردنا أن نبنى بنية بيانات خاصه بنا فيجب علينا تصميمهم فى بنية البيانات الخاصة بنا.
 
-These methods are generic, there is a common agreement to use them for data structures. If we ever create a data structure of our own, we should implement them too.
-
-They are supported for:
-
+:يتم دعم هؤلاء الدوال فى بنية البيانات التالية
 - `Map`
 - `Set`
 - `Array`
 
-Plain objects also support similar methods, but the syntax is a bit different.
+يمكن أيضا للكائنات العادية أن تستخدم هؤلاء الطرق ولكن بتركيب مختلف قليلا.
 
 ## Object.keys, values, entries
 
-For plain objects, the following methods are available:
+متاح للكائنات العادية الدوال التالية: 
 
-- [Object.keys(obj)](mdn:js/Object/keys) -- returns an array of keys.
-- [Object.values(obj)](mdn:js/Object/values) -- returns an array of values.
-- [Object.entries(obj)](mdn:js/Object/entries) -- returns an array of `[key, value]` pairs.
+- [Object.keys(obj)](mdn:js/Object/keys) -- إرجاع مصفوفة من أسماء القيم.
+- [Object.values(obj)](mdn:js/Object/values) -- إرجاع مصفوفة من القيم .
+- [Object.entries(obj)](mdn:js/Object/entries) -- إرجاع مصفوفة أزواج من [إسم / قيمة]
 
-Please note the distinctions (compared to map for example):
+:لاحظ الاختلاقات (مقارنة مع `map`على سبيل المثال)
 
 |             | Map              | Object       |
 |-------------|------------------|--------------|
-| Call syntax | `map.keys()`  | `Object.keys(obj)`, but not `obj.keys()` |
-| Returns     | iterable    | "real" Array                     |
+| تركيب الجملة | `map.keys()`  | `Object.keys(obj)`, ليس `obj.keys()` |
+| النتيجة     | كائن iterable     | "حقيقى" مصفوفه                     |
 
-The first difference is that we have to call `Object.keys(obj)`, and not `obj.keys()`.
+الإختلاف الأول أنه يجب علينا استدعاء  `Object.keys(obj)`, وليس  `obj.keys()`.
 
-Why so? The main reason is flexibility. Remember, objects are a base of all complex structures in JavaScript. So we may have an object of our own like `data` that implements its own `data.values()` method. And we still can call `Object.values(data)` on it.
+لماذا إذن ؟ السبب الرئيسى هو المرونة . تذكر أن الكائنات هى الأساس لكل الهياكل المعقده فى لغه Javascript .
+لهذا يمكن أن يكون لدينا كائن مثل `data`والذى تم تصميم `data.values`الخاصه بيه . ومع ذلك نستطيع أيضا أن نستدعى `object.values(data)`
 
-The second difference is that `Object.*` methods return "real" array objects, not just an iterable. That's mainly for historical reasons.
+السبب الثانى هو أن  ناتج الدوال `*.Object`  هو مصفوفة حقيقه وليس مجرد كائن  قابله للتكرار وهذا لأسباب تاريخيه 
 
-For instance:
+على سبيل المثال : 
 
 ```js
 let user = {
@@ -49,7 +49,7 @@ let user = {
 - `Object.values(user) = ["John", 30]`
 - `Object.entries(user) = [ ["name","John"], ["age",30] ]`
 
-Here's an example of using `Object.values` to loop over property values:
+هذا مثال على إستخدام Object.values لتكرار على قيم الخصائص : 
 
 ```js run
 let user = {
@@ -57,30 +57,29 @@ let user = {
   age: 30
 };
 
-// loop over values
+// التكرار على القيم 
 for (let value of Object.values(user)) {
   alert(value); // John, then 30
 }
 ```
 
-```warn header="Object.keys/values/entries ignore symbolic properties"
-Just like a `for..in` loop, these methods ignore properties that use `Symbol(...)` as keys.
-
-Usually that's convenient. But if we want symbolic keys too, then there's a separate method [Object.getOwnPropertySymbols](mdn:js/Object/getOwnPropertySymbols) that returns an array of only symbolic keys. Also, there exist a method [Reflect.ownKeys(obj)](mdn:js/Reflect/ownKeys) that returns *all* keys.
+```warn header="Object.keys/values/entries تجاهل الخصائص الرمزية"
+مثل حلقة for..in ، تتجاهل هذه الأساليب الخصائص التي تستخدم الرمز (...) كأسماء للقيم .
+عادة ما يكون هذا مناسبًا. ولكن إذا كنت بحاجة إلى التفكير في أسماء القيم الرمزية ، فهناك طريقة Object.getOwnPropertySymbols منفصلة ، والتي تُرجع مجموعة من أسماء القيم الرمزية فقط. أيضًا ، هناك طريقة Reflect.ownKeys (obj) تقوم بإرجاع كافة أسماء القيم .
 ```
 
 
-## Transforming objects
+## تحولات الكائن
 
-Objects lack many methods that exist for arrays, e.g. `map`, `filter` and others.
+تفتقر الكائنات العديد من الدوال المتاحة للمصفوفات مثل`map`, `filter` وغيرها 
 
-If we'd like to apply them, then we can use `Object.entries` followed `Object.fromEntries`:
+وإذا كنت ترغب فى استخدامهم على الكائنات يمكنك استخدام `Object.entries`ثم`Object.fromEntries`: 
 
-1. Use `Object.entries(obj)` to get an array of key/value pairs from `obj`.
-2. Use array methods on that array, e.g. `map`.
-3. Use `Object.fromEntries(array)` on the resulting array to turn it back into an object.
+1. إستخدم `Object.entries(obj)` للحصول على مصفوفه تتكون من قيم وأسماء من خلال `obj`
+2. إستخدم دوال المصفوفات على هذه المصفوفه مثلا `map`
+3. إستخدم`Object.fromEntries(array)` عندما يكون الناتج على شكل مصفوفة لتحويلها مره أخرى إلى كائن
 
-For example, we have an object with prices, and would like to double them:
+على سبيل المثال , لدينا كائن يحتوى على الأسعار ونريد أن نضاعف هذه الأسعار :
 
 ```js run
 let prices = {
@@ -91,12 +90,12 @@ let prices = {
 
 *!*
 let doublePrices = Object.fromEntries(
-  // convert to array, map, and then fromEntries gives back the object
+    // يتم تحويله الى مصفوفه وثم إلى خريطه وثم استخدام لتحويله الى كائن مره أخرى
   Object.entries(prices).map(([key, value]) => [key, value * 2])
 );
 */!*
 
 alert(doublePrices.meat); // 8
-```   
-
-It may look difficult from the first sight, but becomes easy to understand after you use it once or twice. We can make powerful chains of transforms this way. 
+```
+  قد يبدو الأمر معقد من الوهلة الأولى ولكن من السهل فهمه بعد تطبيقه أكتر من مرة .
+ويكمننا ان نقوم بعمل تحويلات قوية  من خلال سطر واحد ولكن يجب أن تكون واضحة ومن السهل فهمها .  

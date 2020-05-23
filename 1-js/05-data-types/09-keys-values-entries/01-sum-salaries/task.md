@@ -2,16 +2,15 @@ importance: 5
 
 ---
 
-# Sum the properties
+# مجموع خصائص الكائن
 
-There is a `salaries` object with arbitrary number of salaries. 
+هناك كائن`salaries` يحتوى على رواتب عشوائية 
 
-Write the function `sumSalaries(salaries)` that returns the sum of all salaries using `Object.values` and the `for..of` loop.
+أكتب دالة `sumSalaries(salaries)`  ناتجها مجموع كل الرواتب بإستخدام`Object.values` و حلقة`for..of`
+   
+إذا كان`salaries` فارغ فالنتيجه لابد أن تكون`0`.
 
-If `salaries` is empty, then the result must be `0`.
-
-For instance:
-
+على سبيل المثال :
 ```js
 let salaries = {
   "John": 100,
